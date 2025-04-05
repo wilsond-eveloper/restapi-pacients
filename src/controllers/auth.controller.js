@@ -1,6 +1,6 @@
 import Staff from '../models/staff.js'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import { createAccessToken } from '../libs/jwt.js'
 
 export const register = async (req, res) => {
 
@@ -17,6 +17,10 @@ export const register = async (req, res) => {
         })
     
         const userSaved = await newUser.save()
+        
+        const token = await createAccessToken({id: userSaved._id})
+        res.cookie('token', token)
+
         res.json({
             id: userSaved._id,
             username: userSaved.username,
@@ -24,10 +28,10 @@ export const register = async (req, res) => {
             createdAt: userSaved.createdAt,
             updatedAt: userSaved.updatedAt
         })
+
     } catch (error) {
-        console.log(error)
+        res.status(500).json({message: error.message})
     }
 }
-
 
 export const login = (req, res) => res.send('Login')
