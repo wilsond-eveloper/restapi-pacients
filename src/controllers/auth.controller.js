@@ -1,4 +1,4 @@
-import Staff from '../models/staff.js'
+import User from '../models/user.js'
 import bcrypt from 'bcrypt'
 import { createAccessToken } from '../libs/jwt.js'
 
@@ -10,7 +10,7 @@ export const register = async (req, res) => {
 
         const pwdhash = await bcrypt.hash(password, 10)
 
-        const newUser = new Staff({
+        const newUser = new User({
             email,
             username,
             password: pwdhash 
@@ -39,7 +39,7 @@ export const login = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const userFound = await Staff.findOne({ username })
+        const userFound = await User.findOne({ username })
         if (!userFound) {
             return res.status(400).json({ error: 'Username required' })
         }
@@ -74,5 +74,13 @@ export const logout = async (req, res) => {
 }
 
 export const profile = async (req, res) => {
-    return res.json('Profile')
+    const userFound = await User.findById(req.user.id)
+    if(!userFound) return res.status(400).json("User not found")
+    return res.json({
+        id: userFound._id,
+        username: userFound.username,
+        email: userFound.email,
+        createdAt: userFound.createdAt,
+        updatedAt: userFound.updatedAt
+    })
 }
