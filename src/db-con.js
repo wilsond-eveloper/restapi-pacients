@@ -1,6 +1,12 @@
 import mongoose from 'mongoose'
+import dotenv from 'dotenv';
 
-const URI = 'mongodb://localhost/restapi'
+// Cargar variables de entorno
+dotenv.config();
+
+const URI = process.env.MONGODB_URI 
+? process.env.MONGODB_URI
+: 'mongodb://localhost/myapp'
 
 mongoose.connect(URI)
 

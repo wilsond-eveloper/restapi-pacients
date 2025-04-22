@@ -19,6 +19,7 @@ export const register = async (req, res) => {
         const userSaved = await newUser.save()
         
         const token = await createAccessToken({id: userSaved._id})
+        // Guardar el token en una cookie
         res.cookie('token', token)
 
         res.json({
@@ -74,6 +75,7 @@ export const logout = async (req, res) => {
 }
 
 export const profile = async (req, res) => {
+    // Verificar si el usuario está autenticado
     const userFound = await User.findById(req.user.id)
     if(!userFound) return res.status(400).json("User not found")
     return res.json({
